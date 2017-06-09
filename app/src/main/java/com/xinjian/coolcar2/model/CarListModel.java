@@ -1,12 +1,16 @@
 package com.xinjian.coolcar2.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by 57490 on 2017/6/8.
  */
 
-public class CarListModel {
+public class CarListModel implements Serializable{
+
+
+
 
     public String id;
     public String name;

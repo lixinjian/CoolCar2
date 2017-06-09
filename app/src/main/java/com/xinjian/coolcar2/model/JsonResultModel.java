@@ -1,10 +1,12 @@
 package com.xinjian.coolcar2.model;
 
+import java.io.Serializable;
+
 /**
  * Created by 57490 on 2017/6/8.
  */
 
-public class JsonResultModel<T> {
+public class JsonResultModel<T> implements Serializable {
 
     public String status;
     public String msg;
