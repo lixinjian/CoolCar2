@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import com.xinjian.coolcar2.adapter.PinPaiAdapter;
 import com.xinjian.coolcar2.model.BrandModel;
 import com.xinjian.coolcar2.util.HttpUtil;
 import com.xinjian.coolcar2.util.Utility;
+import com.xinjian.coolcar2.widget.Abcdefg;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,26 +41,51 @@ public class ChooseFragment extends Fragment {
     private PinPaiAdapter adapter;
     private List<BrandModel> dataList = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private Abcdefg letterIndexView;
+    private  TextView textView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.choose, container, false);
+        letterIndexView = (Abcdefg) view.findViewById(R.id.letter_index_view);
+        textView= (TextView) view.findViewById(R.id.show_letter_in_center);
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
         adapter = new PinPaiAdapter(getActivity(), dataList);
         listView.setAdapter(adapter);
-
         return view;
+    }
+
+    private void setSlide(){
+        letterIndexView.setTextViewDialog(textView);
+        letterIndexView.setUpdateListView(new Abcdefg.UpdateListView() {
+            @Override
+            public void updateListView(String currentChar) {
+                int positionForSection = adapter.getPositionForSection(currentChar.charAt(0));
+                listView.setSelection(positionForSection);
+            }
+        });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int sectionForPosition = adapter.getSectionForPosition(firstVisibleItem);
+                letterIndexView.updateLetterIndexView(sectionForPosition);
+            }
+        });
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         String weatherUrl = "http://jisucxdq.market.alicloudapi.com/car/brand";
-//        String weatherUrl = "http://www.baidu.com";
         showProgressDialog();
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -83,12 +110,12 @@ public class ChooseFragment extends Fragment {
                         if (jsonResulList != null) {
 
                             for (int i = 0; i < jsonResulList.size(); i++) {
-//                                String s = jsonResulList.get(i).name;
                                 BrandModel brandModel = jsonResulList.get(i);
                                 dataList.add(brandModel);
                             }
                             adapter.notifyDataSetChanged();
                             closeProgressDialog();
+                            setSlide();
                         } else {
                             Toast.makeText(getActivity(), "请刷新数据", Toast.LENGTH_SHORT).show();
                             closeProgressDialog();
@@ -105,7 +132,6 @@ public class ChooseFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), TypeActivity.class);
                 intent.putExtra("parentid",dataList.get(position).id);
                 startActivity(intent);
-//                getActivity().finish();
             }
         });
     }
@@ -130,5 +156,4 @@ public class ChooseFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
-
 }

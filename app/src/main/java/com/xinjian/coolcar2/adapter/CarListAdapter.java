@@ -18,6 +18,8 @@ import com.xinjian.coolcar2.model.CarModel;
 
 import java.util.List;
 
+import static android.R.id.list;
+
 /**
  * Created by Administrator on 2017/6/9 0009.
  */
@@ -59,10 +61,12 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
                 int position = holder.getAdapterPosition();
                 CarModel carModel = mList.get(position);
                 Intent intent = new Intent(mContext, DetailActivity.class);
-                intent.putExtra(DetailActivity.CAR_NAME,carModel.name);
-                intent.putExtra(DetailActivity.CAR_IMAGE,carModel.logo);
-                intent.putExtra(DetailActivity.CAR_PRICE,carModel.list.get(0).price);
-                intent.putExtra(DetailActivity.CAR_TYPE,carModel.list.get(0).sizetype);
+                intent.putExtra(DetailActivity.CAR_NAME, carModel.name);
+                intent.putExtra(DetailActivity.CAR_IMAGE, carModel.logo);
+                if (carModel.list.size() > 0) {
+                    intent.putExtra(DetailActivity.CAR_PRICE, carModel.list.get(0).price);
+                    intent.putExtra(DetailActivity.CAR_TYPE, carModel.list.get(0).sizetype);
+                }
                 mContext.startActivity(intent);
             }
         });
@@ -72,9 +76,9 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-            CarModel carModel = mList.get(position);
-            holder.textView.setText(carModel.name);
-            Glide.with(mContext).load(carModel.logo).into(holder.imageView);
+        CarModel carModel = mList.get(position);
+        holder.textView.setText(carModel.name);
+        Glide.with(mContext).load(carModel.logo).into(holder.imageView);
     }
 
     @Override

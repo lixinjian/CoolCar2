@@ -10,7 +10,7 @@ public class BrandModel implements Serializable {
 
     public String id;
     public String name;
-    public String initial;
+    public String initial;//首字母
     public String parentid;
     public String logo;
     public String depth;
